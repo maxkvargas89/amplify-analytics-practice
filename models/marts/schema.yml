@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: mart_student_progress
+    description: |
+      Comprehensive student progress mart combining activity, learning progress, and dimensional context.
+      One row per student with all metrics for engagement, mastery, and demographic analysis.
+    columns:
+      - name: student_id
+        description: Unique student identifier
+        tests:
+          - unique
+          - not_null
+      
+      - name: full_name
+        description: Student full name
+        tests:
+          - not_null
+      
+      - name: school_id
+        description: Current school
+        tests:
+          - not_null
+      
+      - name: engagement_level
+        description: Engagement classification based on recent activity
+        tests:
+          - accepted_values:
+              values: ['highly_engaged', 'moderately_engaged', 'low_engagement', 'inactive']
+      
+      - name: progress_status
+        description: Progress classification based on mastery rate
+        tests:
+          - accepted_values:
+              values: ['on_track', 'needs_support', 'at_risk']
+      
+      - name: is_activated
+        description: Boolean flag indicating if student has completed first lesson
+        tests:
+          - not_null
+      
+      - name: mastery_rate
+        description: Percentage of units mastered
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+      
+      - name: days_active_last_7
+        description: Days active in last 7 days (for DAU/WAU tracking)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 7
+              inclusive: true

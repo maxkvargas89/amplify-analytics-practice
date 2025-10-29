@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: dim_student
+    description: Student dimension with Type 2 SCD to track school transfers and attribute changes
+    columns:
+      - name: student_key
+        description: Surrogate key (unique for each student version)
+        tests:
+          - unique
+          - not_null
+      
+      - name: student_id
+        description: Natural key for student
+        tests:
+          - not_null
+      
+      - name: school_id
+        description: Current school
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_school')
+              field: school_id
+      
+      - name: effective_date
+        description: When this version became effective
+        tests:
+          - not_null
+      
+      - name: is_current
+        description: Flag indicating if this is the current record
+        tests:
+          - not_null
+
+  - name: dim_school
+    description: School dimension with demographic attributes
+    columns:
+      - name: school_id
+        description: Unique school identifier
+        tests:
+          - unique
+          - not_null
+      
+      - name: school_name
+        description: School name
+        tests:
+          - not_null
+      
+      - name: poverty_level
+        description: Categorization based on free/reduced lunch percentage
+        tests:
+          - accepted_values:
+              values: ['high_poverty', 'moderate_poverty', 'low_poverty']
+
+  - name: dim_learning_unit
+    description: Learning unit curriculum structure
+    columns:
+      - name: learning_unit_id
+        description: Unique learning unit identifier
+        tests:
+          - unique
+          - not_null
+      
+      - name: unit_name
+        description: Name of the learning unit
+        tests:
+          - not_null
+      
+      - name: grade_level
+        description: Grade level for this unit
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: Date dimension with K-12 school calendar context
+    columns:
+      - name: date_day
+        description: The date
+        tests:
+          - unique
+          - not_null
+      
+      - name: school_year
+        description: School year (Aug-July)
+        tests:
+          - not_null
+      
+      - name: is_school_day
+        description: Boolean flag for school days (Mon-Fri, excluding holidays)
+        tests:
+          - not_null
