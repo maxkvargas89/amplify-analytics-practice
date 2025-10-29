@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: raw_data
+    description: Raw source data from application database
+    database: amplify-analytics-practice
+    schema: raw_data
+    tables:
+      - name: student_events
+        description: Raw student activity events from the learning platform
+        columns:
+          - name: event_id
+            description: Unique identifier for each event
+            tests:
+              - unique
+              - not_null
+
+          - name: student_id
+            description: Student identifier
+            tests:
+              - not_null
+
+          - name: event_timestamp
+            description: When the event occurred
+            tests:
+              - not_null
+
+      - name: student_learning_progress
+        description: Student progress snapshots by learning unit
+        columns:
+          - name: progress_id
+            description: Unique identifier for progress record
+            tests:
+              - unique
+              - not_null
+
+      - name: student_roster
+        description: Student demographic and enrollment information with effective dates
+        columns:
+          - name: student_id
+            description: Student identifier
+            tests:
+              - not_null
+              
+          - name: effective_date
+            description: When this record became effective
+            tests:
+              - not_null
+
+      - name: schools
+        description: School dimension data
+        columns:
+          - name: school_id
+            description: Unique school identifier
+            tests:
+              - unique
+              - not_null
+
+      - name: learning_units
+        description: Learning unit curriculum structure
+        columns:
+          - name: learning_unit_id
+            description: Unique learning unit identifier
+            tests:
+              - unique
+              - not_null
