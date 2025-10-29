@@ -40,7 +40,8 @@ student_activity_summary AS (
     SUM(problem_attempts) AS total_problems_attempted,
     MIN(activity_date) AS first_active_date,
     MAX(activity_date) AS last_active_date,
-    DATE_DIFF(MAX(activity_date), MIN(activity_date), DAY) + 1 AS days_since_first_activity
+    DATE_DIFF(MAX(activity_date), MIN(activity_date), DAY) + 1 AS days_since_first_activity,
+    AVG(session_duration_minutes) AS avg_session_duration
     
   FROM student_activity
   GROUP BY student_id
@@ -100,6 +101,7 @@ final AS (
     sa.first_active_date,
     sa.last_active_date,
     sa.days_since_first_activity,
+    sa.avg_session_duration,
     
     -- Learning progress metrics
     COALESCE(sp.total_units_attempted, 0) AS units_attempted,
