@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: fact_student_activity
+    description: Daily student activity metrics aggregated from events
+    columns:
+      - name: activity_key
+        description: Surrogate key for student + date
+        tests:
+          - unique
+          - not_null
+      
+      - name: student_id
+        description: Student identifier
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_student')
+              field: student_id
+      
+      - name: activity_date
+        description: Date of activity
+        tests:
+          - not_null
+      
+      - name: total_events
+        description: Total events for this student on this day
+        tests:
+          - not_null
+      
+      - name: accuracy_rate
+        description: Accuracy rate for problem attempts
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+
+  - name: fact_learning_progress
+    description: Student learning progress by unit with mastery tracking
+    columns:
+      - name: progress_key
+        description: Surrogate key for student + unit + date
+        tests:
+          - unique
+          - not_null
+      
+      - name: student_id
+        description: Student identifier
+        tests:
+          - not_null
+      
+      - name: learning_unit_id
+        description: Learning unit identifier
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_learning_unit')
+              field: learning_unit_id
+      
+      - name: mastery_status
+        description: Current mastery status
+        tests:
+          - accepted_values:
+              values: ['mastered', 'in_progress', 'not_started']
+      
+      - name: accuracy_rate
+        description: Accuracy rate for this unit
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
