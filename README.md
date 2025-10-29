@@ -1,15 +1,31 @@
-Welcome to your new dbt project!
+# Amplify Analytics Engineering Project
 
-### Using the starter project
+Analytics infrastructure for K-12 adaptive learning platform, demonstrating:
+- Type 2 Slowly Changing Dimensions for student data
+- Incremental fact tables for student activity
+- Product analytics (user activation, DAU)
+- K-12-aware dimensional modeling (school years, student mobility)
 
-Try running the following commands:
-- dbt run
-- dbt test
+## Tech Stack
+- **Data Warehouse:** Google BigQuery
+- **Transformation:** dbt Cloud
+- **Version Control:** GitHub
 
+## Project Structure
+- `models/staging/` - Cleaned source data
+- `models/core/dimensions/` - Dimension tables (Type 2 SCDs)
+- `models/core/facts/` - Fact tables (incremental)
+- `models/marts/` - Business-specific analytical marts
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+## Setup
+1. Clone this repository
+2. Install dbt dependencies: `dbt deps`
+3. Configure BigQuery connection in `profiles.yml`
+4. Run models: `dbt run`
+5. Test data quality: `dbt test`
+
+## Key Features
+- **Type 2 SCD:** Tracks student school transfers over time
+- **Incremental Loading:** Efficient processing of large event tables
+- **K-12 Context:** School calendar-aware date dimension
+- **Product Analytics:** User activation, engagement, and progress tracking
