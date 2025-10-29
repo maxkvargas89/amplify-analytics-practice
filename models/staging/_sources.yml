@@ -5,6 +5,9 @@ sources:
     description: Raw source data from application database
     database: amplify-analytics-practice
     schema: raw_data
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
     tables:
       - name: student_events
         description: Raw student activity events from the learning platform
