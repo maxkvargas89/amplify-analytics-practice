@@ -154,3 +154,40 @@ WHERE year = EXTRACT(YEAR FROM CURRENT_DATE())
 GROUP BY 1, 2, 3
 ORDER BY user_id, total_events DESC;
 ```
+
+**Multi-product user adoption and engagement:**
+```sql
+WITH user_product_activity AS (
+    SELECT
+        u.user_id,
+        p.product_name,
+        COUNT(DISTINCT f.event_date) AS active_days,
+        COUNT(f.event_id) AS total_events
+    FROM fact_product_events f
+    INNER JOIN dim_user u ON f.user_key = u.user_key
+    INNER JOIN dim_product p ON f.product_key = p.product_key
+    INNER JOIN dim_date d ON f.date_key = d.date_key
+    WHERE d.date_day >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+    GROUP BY 1, 2
+),
+
+user_product_count AS (
+    SELECT
+        user_id,
+        COUNT(DISTINCT product_name) AS products_used,
+        STRING_AGG(product_name, ', ' ORDER BY product_name) AS product_list,
+        SUM(total_events) AS total_events_all_products
+    FROM user_product_activity
+    GROUP BY 1
+)
+
+SELECT
+    products_used,
+    product_list,
+    COUNT(DISTINCT user_id) AS user_count,
+    ROUND(COUNT(DISTINCT user_id) * 100.0 / SUM(COUNT(DISTINCT user_id)) OVER(), 2) AS pct_of_users,
+    ROUND(AVG(total_events_all_products), 1) AS avg_events_per_user
+FROM user_product_count
+GROUP BY 1, 2
+ORDER BY products_used DESC, product_list;
+```
