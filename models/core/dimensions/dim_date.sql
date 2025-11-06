@@ -6,12 +6,14 @@
 
 WITH date_spine AS (
   SELECT 
-    DATE_ADD('2024-08-01', INTERVAL day_offset DAY) AS date_day
+    DATE_ADD('2023-01-01', INTERVAL day_offset DAY) AS date_day
   FROM UNNEST(GENERATE_ARRAY(0, 364)) AS day_offset
 ),
 
 date_attributes AS (
   SELECT
+    CAST(FORMAT_DATE('%Y%m%d', date_day) AS INT64) AS date_key,
+
     date_day,
     
     EXTRACT(YEAR FROM date_day) AS year,

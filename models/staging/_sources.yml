@@ -67,3 +67,37 @@ sources:
             tests:
               - unique
               - not_null
+      
+      - name: ela_events
+        description: Raw ela product event stream
+        columns:
+          - name: id
+            description: Unique identifier for each event
+            tests:
+              - unique
+              - not_null
+          - name: userId
+            description: Unique identifier for each user
+            tests:
+              - not_null
+          - name: timestamp
+            description: When this record became effective
+            tests:
+              - not_null
+
+      - name: science_events
+        description: Raw science product event stream
+        columns:
+          - name: id
+            description: Unique identifier for each event
+            tests:
+              - unique
+              - not_null
+          - name: userId
+            description: Unique identifier for each user
+            tests:
+              - not_null
+          - name: timestamp
+            description: When this record became effective
+            tests:
+              - not_null
