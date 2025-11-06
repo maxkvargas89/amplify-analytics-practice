@@ -149,8 +149,8 @@ SELECT
     object_id,
     SUM(event_count) AS total_events
 FROM mart_event_details_monthly
-WHERE year = 2024
-  AND month = 10
+WHERE year = EXTRACT(YEAR FROM CURRENT_DATE())
+  AND month = month - 1
 GROUP BY 1, 2, 3
 ORDER BY user_id, total_events DESC;
 ```
