@@ -1,4 +1,4 @@
-# Amplify Analytics Engineering Project
+# Amplify Analytics Engineering Practice
 
 End-to-end analytics infrastructure for a K-12 adaptive learning platform, demonstrating dimensional modeling, incremental loading, and product analytics.
 
@@ -9,6 +9,7 @@ This project showcases analytics engineering best practices for K-12 education t
 1. **User Activation & Engagement** - Track daily active users (DAU), activation rates, and engagement levels
 2. **Student Progress & Performance** - Monitor learning progression through adaptive units with mastery tracking
 3. **K-12 Context & Equity** - Handle student school transfers via Type 2 SCDs and enable demographic analysis
+4. **Data Modeling Task** - Model of event stream data emitted from 2 different products: ELA and Science
 
 ## 🏗️ Architecture
 
@@ -16,16 +17,24 @@ This project showcases analytics engineering best practices for K-12 education t
 ```
 marts/
 └── mart_student_progress (business-ready analytics)
+└── mart_user_product_activity_weekly (business-ready analytics)
+└── mart_event_details_monthly (business-ready analytics)
         ↑
 core/facts/
 ├── fact_student_activity (daily engagement - incremental)
 └── fact_learning_progress (unit mastery - incremental)
+└── fact_produce_events (real-time events - incremental)
         ↑
 core/dimensions/
 ├── dim_student (Type 2 SCD - handles school transfers)
 ├── dim_school (demographics & poverty classification)
 ├── dim_learning_unit (curriculum structure)
 └── dim_date (K-12 school calendar aware)
+└── dim_user (K-12 school calendar aware)
+└── dim_object (K-12 school calendar aware)
+└── dim_product (K-12 school calendar aware)
+└── dim_verb (K-12 school calendar aware)
+
         ↑
 staging/
 └── 4 staging models (cleaned source data)
@@ -56,24 +65,6 @@ Date dimension understands school years (Aug-July), semesters, and school vs. no
 - Engagement level classification
 - 7-day activity windows
 
-### **Equity Analysis**
-Built-in demographic breakdowns by poverty level, ethnicity, special education status enabling equity-focused insights.
-
-## 📊 Data Models
-
-### **Dimensions (4)**
-- `dim_student` - 7 records (6 students + 1 transfer)
-- `dim_school` - 2 schools with demographics
-- `dim_learning_unit` - 5 curriculum units
-- `dim_date` - 365 days (full school year)
-
-### **Facts (2)**
-- `fact_student_activity` - ~500 rows (student-day grain)
-- `fact_learning_progress` - ~300 rows (student-unit-day grain)
-
-### **Marts (1)**
-- `mart_student_progress` - 6 rows (one per student) with 30+ metrics
-
 ## 🧪 Data Quality
 
 35+ automated tests covering:
@@ -82,28 +73,6 @@ Built-in demographic breakdowns by poverty level, ethnicity, special education s
 - Referential integrity (foreign keys)
 - Accepted value ranges
 - Business logic validation
-
-## 🚀 Getting Started
-
-### **Prerequisites**
-- Google Cloud Platform account with BigQuery enabled
-- dbt Cloud account
-- GitHub account
-
-### **Setup**
-```bash
-# Clone repository
-git clone https://github.com/YOUR_USERNAME/amplify-analytics-dbt.git
-
-# Install dbt packages
-dbt deps
-
-# Run full pipeline
-dbt build
-
-# Generate documentation
-dbt docs generate
-```
 
 ### **Sample Queries**
 
@@ -139,25 +108,49 @@ FROM marts.mart_student_progress
 GROUP BY poverty_level, ethnicity;
 ```
 
-## 🎓 Learning Outcomes
+**Active (>5 events) Users:**
+```sql
+SELECT 
+    product_name,
+    COUNT(DISTINCT user_id) AS active_users
+FROM mart_user_product_activity_weekly
+WHERE is_active_user = TRUE
+GROUP BY product_name;
+```
 
-Through this project, I demonstrated:
-- Kimball dimensional modeling methodology
-- Type 2 SCD implementation for historical tracking
-- Incremental loading strategies for large fact tables
-- K-12 education data modeling complexity
-- dbt best practices (testing, documentation, version control)
-- SQL optimization and BigQuery-specific features
+**Events per user per product last week:**
+```sql
+SELECT 
+    user_id,
+    product_name,
+    event_count
+FROM mart_user_event_summary
+ORDER BY event_count DESC;
+```
 
-## 🔗 Links
+**Selected verb events by product per month:**
+```sql
+SELECT 
+    product_name,
+    year,
+    month,
+    SUM(event_count) AS total_events
+FROM mart_event_details_monthly
+WHERE verb_id IN ('selected')
+GROUP BY 1, 2, 3
+ORDER BY year, month, product_name;
+```
 
-- **Repository:** https://github.com/YOUR_USERNAME/amplify-analytics-dbt
-- **dbt Documentation:** [Link to hosted docs]
-- **Lineage Graph:** [Screenshot or link]
-
-## 📧 Contact
-
-Max Vargas  
-maxkvargas@gmail.com  
-[LinkedIn](https://linkedin.com/in/maxkvargas)  
-[GitHub](https://github.com/maxkvargas89)
+**Events by user last month, segmented by verb and object:**
+```sql
+SELECT 
+    user_id,
+    verb_id,
+    object_id,
+    SUM(event_count) AS total_events
+FROM mart_event_details_monthly
+WHERE year = 2024
+  AND month = 10
+GROUP BY 1, 2, 3
+ORDER BY user_id, total_events DESC;
+```
