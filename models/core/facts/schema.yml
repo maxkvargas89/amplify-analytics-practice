@@ -71,3 +71,64 @@ models:
               min_value: 0
               max_value: 1
               inclusive: true
+
+  - name: fact_product_events
+    description: "Event-level fact table for ELA and Science product interactions"
+    
+    columns:
+      - name: event_key
+        description: "Surrogate key for this event"
+        tests:
+          - unique
+          - not_null
+      
+      - name: event_id
+        description: "Natural key from source system"
+        tests:
+          - unique
+          - not_null
+      
+      - name: user_key
+        description: "Foreign key to dim_user"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_user')
+              field: user_key
+      
+      - name: product_key
+        description: "Foreign key to dim_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
+      
+      - name: verb_key
+        description: "Foreign key to dim_verb"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_verb')
+              field: verb_key
+      
+      - name: object_key
+        description: "Foreign key to dim_object"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_object')
+              field: object_key
+      
+      - name: date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      
+      - name: event_timestamp
+        description: "Timestamp when event occurred"
+        tests:
+          - not_null
