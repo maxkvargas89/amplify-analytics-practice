@@ -54,3 +54,69 @@ models:
               min_value: 0
               max_value: 7
               inclusive: true
+
+  - name: mart_user_avg_duration_monthly
+    description: |
+      Data mart that calculates the average duration between first and last event in the fact table,
+      aggregated by month and year. Shows the average time between activity for all users.
+      One row per month/year combination.
+    columns:
+      - name: year
+        description: Year of the activity
+        tests:
+          - not_null
+
+      - name: month
+        description: Month number (1-12)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+              inclusive: true
+
+      - name: month_name
+        description: Name of the month
+        tests:
+          - not_null
+
+      - name: avg_duration_seconds
+        description: Average duration in seconds between first and last event per user in the month
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: avg_duration_minutes
+        description: Average duration in minutes between first and last event per user in the month
+        tests:
+          - not_null
+
+      - name: avg_duration_hours
+        description: Average duration in hours between first and last event per user in the month
+        tests:
+          - not_null
+
+      - name: avg_duration_days
+        description: Average duration in days between first and last event per user in the month
+        tests:
+          - not_null
+
+      - name: total_users
+        description: Total number of users with activity in the month
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+
+      - name: min_duration_seconds
+        description: Minimum duration in seconds among all users in the month
+        tests:
+          - not_null
+
+      - name: max_duration_seconds
+        description: Maximum duration in seconds among all users in the month
+        tests:
+          - not_null
