@@ -120,3 +120,30 @@ models:
         description: Maximum duration in seconds among all users in the month
         tests:
           - not_null
+
+  - name: mart_product_rank_by_event_frequency
+    description: |
+      Data mart that ranks products by their event frequency over the last 30 days
+      and counts the number of unique schools that had events for each product.
+      One row per product with ranking and school count metrics.
+    columns:
+      - name: product_name
+        description: Name of the product (e.g., English Language Arts, Science)
+        tests:
+          - not_null
+
+      - name: product_rank
+        description: Rank of the product based on event frequency (1 = highest frequency)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+
+      - name: total_schools
+        description: Count of unique schools that had events for this product in the last 30 days
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
