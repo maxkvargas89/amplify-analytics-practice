@@ -1,4 +1,4 @@
-# Amplify Analytics Engineering Practice
+# K-12 Curriculum Analytics Engineering Practice
 
 End-to-end analytics infrastructure for a K-12 adaptive learning platform, demonstrating dimensional modeling, incremental loading, and product analytics.
 
